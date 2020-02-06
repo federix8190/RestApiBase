@@ -1,11 +1,16 @@
 package py.gov.csj.poi.seguridad;
 
+import static py.gov.csj.poi.utils.Constantes.EJB_JNDI_USUARIO_SERVICE;
+
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.ejb.Singleton;
 import javax.enterprise.context.Dependent;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -21,7 +26,13 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import py.gov.csj.poi.dto.UsuarioDTO;
+import py.gov.csj.poi.service.UsuarioService;
+import py.gov.csj.poi.utils.SessionUtils;
+
 public class KRealm extends AuthorizingRealm {
+	
+	UsuarioService userService;
 
 	/**
      * Obtiene los datos de autenticacion del usuario(username y password)
@@ -49,17 +60,18 @@ public class KRealm extends AuthorizingRealm {
     	try {
     		
     		String username = prins.getPrimaryPrincipal().toString();
+    		System.err.println("3 - doGetAuthorizationInfo : " + username);
+    		
     		Context ctx = new InitialContext();
-			//UsuarioService userService = (UsuarioService) ctx.lookup("java:global/RestApi/UsuarioService!py.com.konecta.services.UsuarioService");
-		    System.err.println("3 - doGetAuthorizationInfo : " + username);
-		    
-		    //info.addStringPermission("user:info:create");
+            userService = (UsuarioService) ctx.lookup(EJB_JNDI_USUARIO_SERVICE);
+            
+            //info.addStringPermission("user:info:create");
 		    Set<String> permisos = new HashSet<>();
-		    permisos.add("LISTAR_USUARIO");
+		    permisos.add("LISTAR_CONFIGURACION");
 		    info = new SimpleAuthorizationInfo(permisos);
-		    info.addStringPermission("test:read");
+		    //info.addStringPermission("test:read");
         
-		} catch (NamingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
     	

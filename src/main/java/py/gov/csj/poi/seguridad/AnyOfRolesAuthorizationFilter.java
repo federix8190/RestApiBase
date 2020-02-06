@@ -17,6 +17,7 @@ public class AnyOfRolesAuthorizationFilter extends RolesAuthorizationFilter {
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response,
             Object mappedValue) throws IOException {
 
+		System.err.println("4 isAccessAllowed");
         final Subject subject = getSubject(request, response);
         final String[] rolesArray = (String[]) mappedValue;
         List<String> roles = Arrays.asList(rolesArray);

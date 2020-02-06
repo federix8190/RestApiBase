@@ -1,5 +1,7 @@
 package py.gov.csj.poi.seguridad;
 
+import static py.gov.csj.poi.utils.Constantes.EJB_JNDI_USUARIO_SERVICE;
+
 import java.net.URL;
 import javax.inject.Inject;
 import javax.naming.Context;
@@ -11,10 +13,12 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
+import py.gov.csj.poi.model.Usuario;
+import py.gov.csj.poi.service.UsuarioService;
+
 public class KCredentialsMatcher extends SimpleCredentialsMatcher {
 	
-	//@Inject
-	//UsuarioService userService;
+	UsuarioService userService;
 
 	 /**
      * Verifica las credenciales del usuario(username y password)
@@ -35,9 +39,16 @@ public class KCredentialsMatcher extends SimpleCredentialsMatcher {
 	            
 	            System.err.println("2 - doCredentialsMatch : " + username + " - " + encryptedToken);
 	            Context ctx = new InitialContext();
-	            //userService = (UsuarioService) ctx.lookup("java:global/RestApi/UsuarioService!py.com.konecta.services.UsuarioService");
-	            //return userService.esValido(username, encryptedToken);
-	            return true;
+	            userService = (UsuarioService) ctx.lookup(EJB_JNDI_USUARIO_SERVICE);
+	            
+	            Usuario user = new Usuario();            
+	            user.setAlias(username);
+	            user.setPassword(encryptedToken);
+	            
+	            Usuario usuario = userService.findByCorreoPassword(user);
+	            if (usuario != null) {
+	            	return true;
+	            }
 	        }
         } catch (Exception e) {
         	e.printStackTrace();

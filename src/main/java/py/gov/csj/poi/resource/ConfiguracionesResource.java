@@ -21,7 +21,7 @@ import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Configuracion;
 import py.gov.csj.poi.service.ConfiguracionesServices;
 
-@Path("/config")
+@Path("/configuraciones")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ConfiguracionesResource {
