@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
 import py.gov.csj.poi.base.BaseResource;
+import py.gov.csj.poi.dto.UsuarioDTO;
 import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Usuario;
 import py.gov.csj.poi.service.UsuarioService;

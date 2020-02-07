@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import com.google.gson.Gson;
 
+import py.gov.csj.poi.ListaPaginada;
 import py.gov.csj.poi.Respuesta;
 import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Usuario;
@@ -36,10 +37,10 @@ public abstract class BaseResource <G extends Object, S extends BaseService<G>> 
      */
     protected ObjectMapper mapper = new ObjectMapper();
     
-    /*@GET
+    @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public ListaResponse<G> listar(
+    public ListaPaginada<G> listar(
             @QueryParam("page") @DefaultValue("1") Integer pagina,
             @QueryParam("count") @DefaultValue("20") Integer cantidad,
             @QueryParam("sortBy") @DefaultValue("id") String orderBy,
@@ -64,7 +65,7 @@ public abstract class BaseResource <G extends Object, S extends BaseService<G>> 
         }
         
         return getService().listar(inicio, cantidad, orderBy, orderDir, filtros);
-    }*/
+    }
 	
 	@POST
     @Path("/")
