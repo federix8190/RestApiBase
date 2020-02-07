@@ -47,22 +47,9 @@ public abstract class BaseResource <G extends Object, S extends BaseService<G>> 
             @QueryParam("sortOrder") @DefaultValue("DESC") String orderDir,
             @QueryParam("filters") String json) {
         
-        // se calcula el inicio de la grilla
         pagina = pagina > 0 ? pagina : 1;
         Integer inicio = (pagina - 1) * cantidad;
-        
-        // se parsea el json para consutrir el filtro
-        HashMap<String, Object> filtros = null;
-        if (json != null && json.trim().length() > 2) {
-            try {
-                filtros = mapper.readValue(json, new TypeReference<HashMap<String, Object>>() {
-                });
-                //filtros = setearFiltros(filtros, httpRequest.getPathInfo());
-            } catch (Exception e) {
-                throw new WebApplicationException(e.getMessage(),
-                        Response.Status.INTERNAL_SERVER_ERROR);
-            }
-        }
+        HashMap<String, Object> filtros = getFiltros(json);
         
         return getService().listar(inicio, cantidad, orderBy, orderDir, filtros);
     }
@@ -132,6 +119,26 @@ public abstract class BaseResource <G extends Object, S extends BaseService<G>> 
     protected Response badRequest(String mensaje) {
         Respuesta resp = new Respuesta(false, mensaje);
         return Response.status(400).entity(resp).build();
+    }
+    
+    /**
+     * se parsea el json para consutrir el filtro
+     * @param json
+     * @return
+     */
+    protected HashMap<String, Object> getFiltros(String json) {
+    	HashMap<String, Object> filtros = new HashMap<String, Object>();
+        if (json != null && json.trim().length() > 2) {
+            try {
+                filtros = mapper.readValue(json, new TypeReference<HashMap<String, Object>>() {
+                });
+                //filtros = setearFiltros(filtros, httpRequest.getPathInfo());
+            } catch (Exception e) {
+                throw new WebApplicationException(e.getMessage(),
+                        Response.Status.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return filtros;
     }
 
 }

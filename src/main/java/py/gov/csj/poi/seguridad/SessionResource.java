@@ -17,7 +17,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
 import py.gov.csj.poi.Respuesta;
-import py.gov.csj.poi.dto.UsuarioDTO;
 import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Usuario;
 import py.gov.csj.poi.service.UsuarioService;
@@ -46,7 +45,7 @@ public class SessionResource {
         if (!currentUser.isAuthenticated()) {
             return autenticar(credenciales);
         } else {
-            UsuarioDTO usuario = SessionUtils.getCurrentUser();
+        	CurrentUser usuario = SessionUtils.getCurrentUser();
             LoginResponse resp = new LoginResponse(usuario.getId(), usuario.getNombre(), usuario.getPermisos(), "Usuario autenticado");
             return ok(resp);
         }
@@ -72,7 +71,7 @@ public class SessionResource {
             
             if (usuario != null) {
                 Set<String> permisos = usuarioService.getPermisosUsuario(username);
-                UsuarioDTO dto = new UsuarioDTO(usuario.getId(), usuario.getNombre(), usuario.getRol(), permisos);
+                CurrentUser dto = new CurrentUser(usuario.getId(), usuario.getNombre(), usuario.getRol(), permisos);
                 currentUser.getSession().setAttribute("currentUserSession", dto);
                 Respuesta res = new LoginResponse(usuario.getId(), usuario.getNombre(), permisos);
                 return ok(res);

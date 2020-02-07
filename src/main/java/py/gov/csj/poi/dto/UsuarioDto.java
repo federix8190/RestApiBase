@@ -2,17 +2,28 @@ package py.gov.csj.poi.dto;
 
 import java.util.Set;
 
-public class UsuarioDTO {
+import py.gov.csj.poi.model.Usuario;
+
+public class UsuarioDto {
 	
 	private Long id;
 	private String nombre;
+	private String apellido;
+	private String correo;
 	private Long rol;
 	private Set<String> permisos;
 	
-	public UsuarioDTO() {
+	public UsuarioDto() {
 	}
 	
-	public UsuarioDTO(Long id, String nombre, Long rol, Set<String> permisos) {
+	public UsuarioDto(Usuario usuario) {
+		this.id = usuario.getId();
+		this.nombre = usuario.getNombre();
+		this.apellido = usuario.getApellido();
+		this.correo = usuario.getCorreo();
+	}
+	
+	public UsuarioDto(Long id, String nombre, Long rol, Set<String> permisos) {
 		this.id = id;
 		this.nombre = nombre;
 		this.rol = rol;
@@ -51,4 +62,19 @@ public class UsuarioDTO {
 		this.permisos = permisos;
 	}
 
+	public String getApellido() {
+		return apellido;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
+
+	public String getCorreo() {
+		return correo;
+	}
+
+	public void setCorreo(String correo) {
+		this.correo = correo;
+	}
 }

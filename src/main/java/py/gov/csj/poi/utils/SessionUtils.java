@@ -2,13 +2,14 @@ package py.gov.csj.poi.utils;
 
 import org.apache.shiro.SecurityUtils;
 
-import py.gov.csj.poi.dto.UsuarioDTO;
+import py.gov.csj.poi.dto.UsuarioDto;
+import py.gov.csj.poi.seguridad.CurrentUser;
 
 public class SessionUtils {
 	
-	public static UsuarioDTO getCurrentUser() {
+	public static CurrentUser getCurrentUser() {
 		
-		UsuarioDTO user = (UsuarioDTO) SecurityUtils.getSubject().getSession()
+		CurrentUser user = (CurrentUser) SecurityUtils.getSubject().getSession()
         		.getAttribute("currentUserSession");
         return user;
     }

@@ -24,14 +24,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.codehaus.jackson.type.TypeReference;
 
+import py.gov.csj.poi.ListaPaginada;
 import py.gov.csj.poi.base.BaseResource;
-import py.gov.csj.poi.dto.UsuarioDTO;
+import py.gov.csj.poi.dto.UsuarioDto;
 import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Usuario;
 import py.gov.csj.poi.service.UsuarioService;
@@ -47,6 +50,30 @@ public class UsuariosResource extends BaseResource<Usuario, UsuarioService> {
 	public UsuarioService getService() {
 		return service;
 	}
+	
+	@GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ListaPaginada<UsuarioDto> listarUsuarios(
+            @QueryParam("page") @DefaultValue("1") Integer pagina,
+            @QueryParam("count") @DefaultValue("20") Integer cantidad,
+            @QueryParam("sortBy") @DefaultValue("id") String orderBy,
+            @QueryParam("sortOrder") @DefaultValue("DESC") String orderDir,
+            @QueryParam("filters") String json) {
+        
+        pagina = pagina > 0 ? pagina : 1;
+        Integer inicio = (pagina - 1) * cantidad;
+        HashMap<String, Object> filtros = getFiltros(json);
+        
+        ListaPaginada<Usuario> lista = getService().listar(inicio, cantidad, orderBy, orderDir, filtros);
+        List<Usuario> items = lista.getLista();
+        List<UsuarioDto> usuarios = new ArrayList<UsuarioDto>();
+        for (Usuario item : items) {
+        	usuarios.add(new UsuarioDto(item));
+        }
+        ListaPaginada<UsuarioDto> res = new ListaPaginada<UsuarioDto>(usuarios, inicio, lista.getTotal());
+        return res;
+    }
 	
 	@GET
     @Path("/roles")

@@ -1,5 +1,6 @@
 package py.gov.csj.poi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListaPaginada<T> {
@@ -10,6 +11,10 @@ public class ListaPaginada<T> {
 	private int inicio;
 	private int cantidad;
 	private int total;
+	
+	public ListaPaginada() {
+		this.lista = new ArrayList<T>();
+	}
 
 	public ListaPaginada(List<T> lista, int total, int inicio, int cantidad) {
 		this.lista = lista;
@@ -18,11 +23,11 @@ public class ListaPaginada<T> {
 		this.total = total;
 	}
 	
-	public ListaPaginada(List<T> lista, int inicio, int cantidad) {
+	public ListaPaginada(List<T> lista, int inicio, int total) {
 		this.lista = lista;
 		this.inicio = inicio;
-		this.cantidad = cantidad;
-		this.total = lista.size();
+		this.cantidad = lista.size();
+		this.total = total;
 	}
 
 	public List<T> getLista() {
