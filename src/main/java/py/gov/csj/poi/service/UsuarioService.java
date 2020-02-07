@@ -6,6 +6,7 @@ import static py.gov.csj.poi.utils.Constantes.USUARIO_SIN_ROL;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import javax.persistence.Query;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
 
+import py.gov.csj.poi.ListaPaginada;
 import py.gov.csj.poi.base.BaseServiceImpl;
 import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Permiso;
@@ -52,6 +54,20 @@ public class UsuarioService extends BaseServiceImpl<Usuario> {
         datos.setUsuarioModificacion(getUser());
         em.merge(datos);
 	}
+	
+	/*@Override
+    public ListaPaginada<Usuario> listar(Integer inicio, Integer cantidad, String orderBy, 
+            String orderDir, HashMap<String, Object> filtros) {
+        
+		StringBuilder query = new StringBuilder();
+        query.append("SELECT c FROM py.gov.csj.poi.model.Usuario c WHERE ciudad.nombre = :ciudad_nombre AND activo = true");
+        Query q = em.createQuery(query.toString());
+        q.setParameter("ciudad_nombre", filtros.get("ciudad_nombre"));
+        List<Usuario> lista = q.getResultList();
+        logInfo(query.toString());
+        ListaPaginada<Usuario> res = new ListaPaginada<Usuario>(lista, 0, 0);
+        return res;
+	}*/
 	
 	public Usuario findByName(String username) throws AppException {
 

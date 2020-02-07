@@ -10,6 +10,7 @@ public class UsuarioDto {
 	private String nombre;
 	private String apellido;
 	private String correo;
+	private String ciudad_nombre;
 	private Long rol;
 	private Set<String> permisos;
 	
@@ -21,6 +22,9 @@ public class UsuarioDto {
 		this.nombre = usuario.getNombre();
 		this.apellido = usuario.getApellido();
 		this.correo = usuario.getCorreo();
+		if (usuario.getCiudad() != null) {
+			this.ciudad_nombre = usuario.getCiudad().getNombre();
+		}
 	}
 	
 	public UsuarioDto(Long id, String nombre, Long rol, Set<String> permisos) {
@@ -77,4 +81,14 @@ public class UsuarioDto {
 	public void setCorreo(String correo) {
 		this.correo = correo;
 	}
+
+	public String getCiudad_nombre() {
+		return ciudad_nombre;
+	}
+
+	public void setCiudad_nombre(String ciudad_nombre) {
+		this.ciudad_nombre = ciudad_nombre;
+	}
+
+	
 }

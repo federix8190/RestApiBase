@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -39,6 +41,10 @@ public class Usuario extends BaseEntity implements Serializable {
     
     @Column(name = "rol")
     private Long rol;
+    
+    @JoinColumn(name = "id_ciudad", referencedColumnName = "id")
+    @ManyToOne
+    private Ciudad ciudad;
     
     public Usuario() {
     }
@@ -97,6 +103,14 @@ public class Usuario extends BaseEntity implements Serializable {
 
 	public void setRol(Long rol) {
 		this.rol = rol;
+	}
+
+	public Ciudad getCiudad() {
+		return ciudad;
+	}
+
+	public void setCiudad(Ciudad ciudad) {
+		this.ciudad = ciudad;
 	}
 
 }

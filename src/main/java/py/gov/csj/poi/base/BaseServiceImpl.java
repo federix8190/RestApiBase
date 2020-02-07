@@ -101,15 +101,23 @@ public abstract class BaseServiceImpl<G extends BaseEntity> implements BaseServi
         int token = 1;
         sb.append(" WHERE ");
         for (String key : filtros.keySet()) {
-            if (filtros.get(key) instanceof String) {
+        	String clave = key;
+        	if (key.contains("_")) {
+        		String[] campos = key.split("_");
+        		clave = campos[0] + "." + campos[1];
+        	}	
+            
+        	if (filtros.get(key) instanceof String) {
                 sb.append(" LOWER(c.")
-                        .append(key)
+                        .append(clave)
                         .append(") LIKE LOWER(:")
                         .append(key)
                         .append(")");
             } else {
-                sb.append(key).append(" = :").append(key);
+                sb.append(clave).append(" = :").append(key);
             }
+	            
+        	
             //se añade el 'AND' si hay más caracteres.
             if (token < tokens) {
                 sb.append(" AND ");
