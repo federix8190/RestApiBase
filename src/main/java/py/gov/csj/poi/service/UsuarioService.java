@@ -5,6 +5,7 @@ import static py.gov.csj.poi.utils.Constantes.USUARIO_SIN_ROL;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,23 @@ public class UsuarioService extends BaseServiceImpl<Usuario> {
 	@Override
 	public Logger getLogger() {
 		return Logger.getLogger(this.getClass().getCanonicalName());
+	}
+	
+	@Override
+    public void modificar(Long id, Usuario datos) throws AppException {
+		Usuario entity = (Usuario) em.find(getEntity(), id);
+        if (entity == null) {
+            throw new AppException.NotFound("No encontado");
+        }
+        datos.setId(entity.getId());
+        datos.setAlias(entity.getAlias());
+        datos.setPassword(entity.getPassword());
+        datos.setActivo(entity.isActivo());
+        datos.setFechaCreacion(entity.getFechaCreacion());
+        datos.setUsuarioCreacion(entity.getUsuarioCreacion());
+        datos.setFechaModificacion(new Date());
+        datos.setUsuarioModificacion(getUser());
+        em.merge(datos);
 	}
 	
 	public Usuario findByName(String username) throws AppException {

@@ -55,11 +55,11 @@ public class UsuariosResource extends BaseResource<Usuario, UsuarioService> {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ListaPaginada<UsuarioDto> listarUsuarios(
-            @QueryParam("page") @DefaultValue("1") Integer pagina,
-            @QueryParam("count") @DefaultValue("20") Integer cantidad,
-            @QueryParam("sortBy") @DefaultValue("id") String orderBy,
-            @QueryParam("sortOrder") @DefaultValue("DESC") String orderDir,
-            @QueryParam("filters") String json) {
+            @QueryParam(PAGINA) @DefaultValue("1") Integer pagina,
+            @QueryParam(COUNT) @DefaultValue("10") Integer cantidad,
+            @QueryParam(SORT) @DefaultValue("id") String orderBy,
+            @QueryParam(ORDER) @DefaultValue("DESC") String orderDir,
+            @QueryParam(FILTROS) String json) {
         
         pagina = pagina > 0 ? pagina : 1;
         Integer inicio = (pagina - 1) * cantidad;

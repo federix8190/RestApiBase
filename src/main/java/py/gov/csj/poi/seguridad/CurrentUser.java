@@ -5,13 +5,13 @@ import java.util.Set;
 public class CurrentUser {
 
 	private Long id;
-	private String nombre;
+	private String alias;
 	private Long rol;
 	private Set<String> permisos;
 	
-	public CurrentUser(Long id, String nombre, Long rol, Set<String> permisos) {
+	public CurrentUser(Long id, String alias, Long rol, Set<String> permisos) {
 		this.id = id;
-		this.nombre = nombre;
+		this.alias = alias;
 		this.rol = rol;
 		this.permisos = permisos;
 	}
@@ -24,12 +24,12 @@ public class CurrentUser {
 		this.id = id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getAlias() {
+		return alias;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 	public Long getRol() {
@@ -47,8 +47,6 @@ public class CurrentUser {
 	public void setPermisos(Set<String> permisos) {
 		this.permisos = permisos;
 	}
-	
-	
 
 }
 

@@ -30,6 +30,13 @@ import py.gov.csj.poi.model.Usuario;
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class BaseResource <G extends Object, S extends BaseService<G>> {
 	
+	protected final static String PAGINA = "pagina";
+	protected final static String COUNT = "cantidad";
+	protected final static String SORT = "sortBy";
+	protected final static String ORDER = "sortOrder";
+	protected final static String FILTROS = "filtros";
+	protected final static String TODOS = "todos";
+	
     public abstract S getService();
     
     /**
@@ -41,11 +48,11 @@ public abstract class BaseResource <G extends Object, S extends BaseService<G>> 
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public ListaPaginada<G> listar(
-            @QueryParam("page") @DefaultValue("1") Integer pagina,
-            @QueryParam("count") @DefaultValue("20") Integer cantidad,
-            @QueryParam("sortBy") @DefaultValue("id") String orderBy,
-            @QueryParam("sortOrder") @DefaultValue("DESC") String orderDir,
-            @QueryParam("filters") String json) {
+    		@QueryParam(PAGINA) @DefaultValue("1") Integer pagina,
+            @QueryParam(COUNT) @DefaultValue("10") Integer cantidad,
+            @QueryParam(SORT) @DefaultValue("id") String orderBy,
+            @QueryParam(ORDER) @DefaultValue("DESC") String orderDir,
+            @QueryParam(FILTROS) String json) {
         
         pagina = pagina > 0 ? pagina : 1;
         Integer inicio = (pagina - 1) * cantidad;

@@ -46,7 +46,7 @@ public class SessionResource {
             return autenticar(credenciales);
         } else {
         	CurrentUser usuario = SessionUtils.getCurrentUser();
-            LoginResponse resp = new LoginResponse(usuario.getId(), usuario.getNombre(), usuario.getPermisos(), "Usuario autenticado");
+            LoginResponse resp = new LoginResponse(usuario.getId(), usuario.getAlias(), usuario.getPermisos(), "Usuario autenticado");
             return ok(resp);
         }
     }
@@ -71,7 +71,7 @@ public class SessionResource {
             
             if (usuario != null) {
                 Set<String> permisos = usuarioService.getPermisosUsuario(username);
-                CurrentUser dto = new CurrentUser(usuario.getId(), usuario.getNombre(), usuario.getRol(), permisos);
+                CurrentUser dto = new CurrentUser(usuario.getId(), usuario.getAlias(), usuario.getRol(), permisos);
                 currentUser.getSession().setAttribute("currentUserSession", dto);
                 Respuesta res = new LoginResponse(usuario.getId(), usuario.getNombre(), permisos);
                 return ok(res);

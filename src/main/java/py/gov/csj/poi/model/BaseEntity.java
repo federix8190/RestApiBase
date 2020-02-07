@@ -8,7 +8,12 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @MappedSuperclass
+@JsonIgnoreProperties({"activo", "usuarioCreacion", "fechaCreacion", 
+	"usuarioModificacion", "fechaModificacion", 
+	"usuarioEliminacion", "fechaEliminacion"})
 public abstract class BaseEntity implements Serializable  {
 	
 	private static final long serialVersionUID = 1L;
@@ -16,9 +21,22 @@ public abstract class BaseEntity implements Serializable  {
 	@Column(name = "activo")
 	protected Boolean activo;
 	
+	@Column(name = "usuario_creacion")
+	protected Long usuarioCreacion;
+	
 	@Column(name = "fecha_creacion")
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date fechaCreacion;
+	
+	@Column(name = "usuario_modificacion")
+	protected Long usuarioModificacion;
+	
+	@Column(name = "fecha_modificacion")
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date fechaModificacion;
+	
+	@Column(name = "usuario_eliminacion")
+	protected Long usuarioEliminacion;
 	
 	@Column(name = "fecha_eliminacion")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -46,6 +64,38 @@ public abstract class BaseEntity implements Serializable  {
 
 	public void setFechaEliminacion(Date fechaEliminacion) {
 		this.fechaEliminacion = fechaEliminacion;
+	}
+
+	public Long getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(Long usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public Long getUsuarioModificacion() {
+		return usuarioModificacion;
+	}
+
+	public void setUsuarioModificacion(Long usuarioModificacion) {
+		this.usuarioModificacion = usuarioModificacion;
+	}
+
+	public Date getFechaModificacion() {
+		return fechaModificacion;
+	}
+
+	public void setFechaModificacion(Date fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
+	}
+
+	public Long getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(Long usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
 	}
 	
 }
