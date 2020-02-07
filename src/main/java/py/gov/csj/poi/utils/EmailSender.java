@@ -12,9 +12,14 @@ import org.apache.shiro.SecurityUtils;
 
 import com.sun.mail.smtp.SMTPTransport;
 
+import py.gov.csj.poi.errores.AppException;
+import py.gov.csj.poi.service.ConfiguracionesServices;
+
 import java.security.Security;
 import java.util.Properties;
 
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -22,28 +27,30 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+@Stateless
 public class EmailSender {
 	
+	@Inject
+	ConfiguracionesServices config;
+	
 	@SuppressWarnings("restriction")
-    public static void send(String recipientEmail,
-            String ccEmail, String title, String message) throws AddressException, MessagingException {
+    public void send(String recipientEmail, String ccEmail, String title, String message) 
+    		throws AddressException, MessagingException, AppException {
 
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+        
+        String host = config.get("MAIL_SMTPS_HOST");
+        String port = config.get("MAIL_SMTPS_PORT");
+        String user = config.get("MAIL_SMTPS_USER");
+        String pass = config.get("MAIL_SMTPS_PASS");
 
         // Get a Properties object
         Properties props = System.getProperties();
-        /*props.setProperty("mail.smtps.host", Constantes.MAIL_SMTPS_HOST);
-        props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.port", Constantes.MAIL_SMTPS_PORT);
-        props.setProperty("mail.smtp.socketFactory.port", Constantes.MAIL_SMTPS_PORT);
-        props.setProperty("mail.smtps.auth", "true");*/
-
-        props.put("mail.smtp.host", Constantes.MAIL_SMTPS_HOST);
+        props.put("mail.smtp.host", host);
         props.put("mail.smtp.starttls.enable", "false");
-        props.put("mail.smtp.port", 25);
-        props.put("mail.smtp.user", Constantes.USERN_EMAIL);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.user", user);
         props.put("mail.smtp.auth", "true");
 
         props.put("mail.smtps.quitwait", "false");
@@ -54,7 +61,7 @@ public class EmailSender {
         final MimeMessage msg = new MimeMessage(session);
 
         // -- Set the FROM and TO fields --
-        msg.setFrom(new InternetAddress(Constantes.USERN_EMAIL));
+        msg.setFrom(new InternetAddress(user));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail, false));
 
         if (ccEmail.length() > 0) {
@@ -68,7 +75,7 @@ public class EmailSender {
 
         SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
 
-        t.connect(Constantes.MAIL_SMTPS_HOST, Constantes.USERN_EMAIL, Constantes.PASSWORD_EMAIL);
+        t.connect(host, user, pass);
         t.sendMessage(msg, msg.getAllRecipients());
         t.close();
     }

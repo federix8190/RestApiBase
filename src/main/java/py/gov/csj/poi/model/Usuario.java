@@ -35,6 +35,9 @@ public class Usuario extends BaseEntity implements Serializable {
     @Column(name = "password")
     private String password;
     
+    @Column(name = "rol")
+    private Long rol;
+    
     public Usuario() {
     }
 
@@ -84,6 +87,14 @@ public class Usuario extends BaseEntity implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Long getRol() {
+		return rol;
+	}
+
+	public void setRol(Long rol) {
+		this.rol = rol;
 	}
 
 }

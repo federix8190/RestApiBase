@@ -6,14 +6,17 @@ public class UsuarioDTO {
 	
 	private Long id;
 	private String nombre;
+	private Long rol;
 	private Set<String> permisos;
 	
 	public UsuarioDTO() {
 	}
 	
-	public UsuarioDTO(Long id, String nombre, Set<String> permisos) {
+	public UsuarioDTO(Long id, String nombre, Long rol, Set<String> permisos) {
 		this.id = id;
 		this.nombre = nombre;
+		this.rol = rol;
+		this.permisos = permisos;
 	}
 
 	public Long getId() {
@@ -30,6 +33,14 @@ public class UsuarioDTO {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	public Long getRol() {
+		return rol;
+	}
+
+	public void setRol(Long rol) {
+		this.rol = rol;
 	}
 
 	public Set<String> getPermisos() {

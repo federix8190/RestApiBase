@@ -1,29 +1,19 @@
 package py.gov.csj.poi.seguridad;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
 import py.gov.csj.poi.Respuesta;
@@ -39,6 +29,8 @@ public class SessionResource {
 	
 	@EJB
     UsuarioService usuarioService;
+	
+	private Logger logger = Logger.getLogger(SessionResource.class.getCanonicalName());
 	
 	@POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -62,10 +54,13 @@ public class SessionResource {
 	
 	private Response autenticar(Credenciales credenciales) throws AppException, Exception {
 
+		String username = null;
+		String password = null;
+		
         try {
 
-            String username = credenciales.getUsername();
-            String password = credenciales.getPassword();
+            username = credenciales.getUsername();
+            password = credenciales.getPassword();
 
             UsernamePasswordToken token = new UsernamePasswordToken(username, password);
             Subject currentUser = SecurityUtils.getSubject();
@@ -76,9 +71,8 @@ public class SessionResource {
             SecurityUtils.getSubject().getSession().setAttribute("usuario", usuario);
             
             if (usuario != null) {
-                Set<String> permisos = new HashSet<>();
-    		    permisos.add("LISTAR_CONFIGURACION");
-                UsuarioDTO dto = new UsuarioDTO(usuario.getId(), usuario.getNombre(), permisos);
+                Set<String> permisos = usuarioService.getPermisosUsuario(username);
+                UsuarioDTO dto = new UsuarioDTO(usuario.getId(), usuario.getNombre(), usuario.getRol(), permisos);
                 currentUser.getSession().setAttribute("currentUserSession", dto);
                 Respuesta res = new LoginResponse(usuario.getId(), usuario.getNombre(), permisos);
                 return ok(res);
@@ -86,8 +80,13 @@ public class SessionResource {
             return unauthorized(new Respuesta(false, Constantes.USUARIO_NO_ENCONTRADO));
 
         } catch (IncorrectCredentialsException e) {
+        	logError("Credenciales incorrectas : " + username);
             Respuesta res = new Respuesta(false, Constantes.PASSWORD_INCORRECTO);
             return unauthorized(res);
+        } catch (Exception e) {
+        	logError("Error al autenticar al usuario : " + username);
+            Respuesta res = new Respuesta(false, Constantes.ERROR_SERVIDOR);
+            return error(res);
         }
     }
 	
@@ -104,7 +103,9 @@ public class SessionResource {
         		currentUser.logout();
         		
         	} catch (Exception e) {
-        		System.err.println("Error al cerrar session : " + e.getMessage());
+        		logError("Error al cerrar session : " + e.getMessage());
+        		Respuesta res = new Respuesta(false, "Error al cerrar session"); 
+                return error(res);
         	}
         }
         Respuesta res = new Respuesta(true, "Session cerrada"); 
@@ -135,5 +136,17 @@ public class SessionResource {
         Respuesta resp = new Respuesta(false, mensaje);
         return Response.status(400).entity(resp).build();
     }
+    
+    protected Response error(Object resp) {
+        return Response.status(500).entity(resp).build();
+    }
+    
+    public void logInfo(String mensaje) {
+    	logger.info(mensaje);
+	}
+    
+    public void logError(String mensaje) {
+    	logger.severe(mensaje);
+	}
 
 }

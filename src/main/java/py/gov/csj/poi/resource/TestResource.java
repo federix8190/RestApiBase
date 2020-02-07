@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import py.gov.csj.poi.Respuesta;
+import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.utils.EmailSender;
 
 @Path("/test")
@@ -26,6 +27,9 @@ public class TestResource {
     
     //@EJB
     //private TestServices service;
+	
+	@EJB
+	EmailSender emailSender;
     
     private Logger logger = Logger.getLogger(TestResource.class.getCanonicalName());
     
@@ -38,10 +42,11 @@ public class TestResource {
     
     @POST
     @Path("/email")
-    public Response sendEmail(HashMap<String, String> datos) throws AddressException, MessagingException {
+    public Response sendEmail(HashMap<String, String> datos) 
+    		throws AddressException, MessagingException, AppException {
         
     	logger.info("Servicio de prueba");
-    	EmailSender.send("federix.8190@gmail.com", "", "Prueba", "Testing envio de mensaje");
+    	emailSender.send("federix.8190@gmail.com", "", "Prueba", "Testing envio de mensaje, blablablabla");
     	return Response.ok().build();
 	}
     

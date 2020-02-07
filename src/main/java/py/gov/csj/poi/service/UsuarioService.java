@@ -1,6 +1,14 @@
 package py.gov.csj.poi.service;
 
+import static py.gov.csj.poi.utils.Constantes.USUARIO_NO_ENCONTRADO;
+import static py.gov.csj.poi.utils.Constantes.USUARIO_SIN_ROL;
+
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -10,10 +18,22 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 
 import py.gov.csj.poi.base.BaseServiceImpl;
 import py.gov.csj.poi.errores.AppException;
+import py.gov.csj.poi.model.Permiso;
 import py.gov.csj.poi.model.Usuario;
+import py.gov.csj.poi.resource.TestResource;
 
 @Stateless
 public class UsuarioService extends BaseServiceImpl<Usuario> {
+	
+	@Override
+	public Class<Usuario> getEntity() {
+		return Usuario.class;
+	}
+	
+	@Override
+	public Logger getLogger() {
+		return Logger.getLogger(this.getClass().getCanonicalName());
+	}
 	
 	public Usuario findByName(String username) throws AppException {
 
@@ -46,9 +66,36 @@ public class UsuarioService extends BaseServiceImpl<Usuario> {
             return usuario;
 
         } catch (Exception e) {
-        	System.err.println("Error al buscar usuario : " + e.getMessage());
+        	logError("Error al buscar usuario : " + e.getMessage());
             return null;
         }
+    }
+	
+	public List<String> getPermisosRol(Long rol) throws AppException {
+    	
+    	try {
+	    	
+    		// 1 - Obtener los ids de los permisos correspondientes al rol
+    		String sql = "SELECT rp.rolPermisoPK.idPermiso FROM RolPermiso rp "
+    				+ "WHERE rp.rolPermisoPK.idRol = :idRol";
+    		Query q = em.createQuery(sql);
+	    	q.setParameter("idRol", rol);
+	    	List<Long> permisos = q.getResultList();
+	    	
+	    	// 2 - Obtener el nombre de los permisos a partir de los ids
+	    	if (permisos != null && permisos.size() > 0) {
+		    	sql = "SELECT p.nombre FROM Permiso p WHERE p.id IN :permisos";
+		    	q = em.createQuery(sql);
+		    	q.setParameter("permisos", permisos);
+		    	List<String> lista = q.getResultList();
+		    	return lista;
+	    	}
+	    	
+	    } catch (Exception e) {
+	    	logError("Error al listar permisos para el rol : " + rol);
+	    }
+    	
+    	return new ArrayList<String>();
     }
 	
 	@Override
@@ -57,10 +104,48 @@ public class UsuarioService extends BaseServiceImpl<Usuario> {
 		entity.setPassword(encryptedToken);
 		return super.insertar(entity);
 	}
-
-	@Override
-	public Class<Usuario> getEntity() {
-		return Usuario.class;
-	}
+	
+	public Set<String> getPermisosUsuario(String userName) throws AppException {
+    	
+		Set<String> res = new HashSet<>();
+		
+    	try {
+	    	
+    		// 1 - Obtener el rol del usuario
+    		Usuario user = findByName(userName);
+    		Long rol = 0l;
+    		if (user != null) {
+    			rol = user.getRol();
+    			if (rol == null) {
+    				throw new AppException.InternalError(USUARIO_SIN_ROL);
+    			}
+    		} else {
+    			throw new AppException.InternalError(USUARIO_NO_ENCONTRADO);
+    		}
+    		
+    		// 2 - Obtener los ids de los permisos correspondientes al rol
+    		String sql = "SELECT rp.rolPermisoPK.idPermiso FROM RolPermiso rp ";
+    		sql = sql  + "WHERE rp.rolPermisoPK.idRol = :idRol";
+    		Query q = em.createQuery(sql);
+	    	q.setParameter("idRol", rol);
+	    	List<Long> permisos = q.getResultList();
+	    	
+	    	// 2 - Obtener el nombre de los permisos a partir de los ids
+	    	if (permisos != null && permisos.size() > 0) {
+		    	sql = "SELECT p.nombre FROM Permiso p WHERE p.id IN :permisos";
+		    	q = em.createQuery(sql);
+		    	q.setParameter("permisos", permisos);
+		    	List<String> lista = q.getResultList();
+		    	if (lista != null) {
+		    		res = new HashSet<>(lista);
+		    	}
+	    	}
+	    	
+	    } catch (Exception e) {
+	    	logError("Error al listar permisos del usuario " + userName + " : " + e.getMessage());
+	    }
+    	
+    	return res;
+    }
 
 }

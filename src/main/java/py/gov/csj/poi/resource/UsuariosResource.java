@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
 import py.gov.csj.poi.base.BaseResource;
+import py.gov.csj.poi.errores.AppException;
 import py.gov.csj.poi.model.Usuario;
 import py.gov.csj.poi.service.UsuarioService;
 
@@ -44,6 +45,14 @@ public class UsuariosResource extends BaseResource<Usuario, UsuarioService> {
 	@Override
 	public UsuarioService getService() {
 		return service;
+	}
+	
+	@GET
+    @Path("/roles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<String> listar(@QueryParam("rol") Long rol) throws AppException {
+		
+		return service.getPermisosRol(rol);
 	}
 
 }
